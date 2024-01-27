@@ -3,8 +3,6 @@
 #                     ZZS                       #
 #                     SBR                       #
 #################################################
-import os
-
 ############static variables#####################
 TG_api = '6647107448:AAGTBWiMZZrTgxLoMfOu-8CrSeJqUBkTCeA'
 admins = [818895144, 1897256227]
@@ -12,16 +10,17 @@ DB_name = 'users.db'
 DUMP_name_csv = 'dumps/backup.csv'
 DUMP_name_xlsx = 'dumps/backup.xlsx'
 #################################################
-
 import telebot
+import os
 from Backend import DB
 from Frontend import Bot_inline_btns, User_data
 
 bot = telebot.TeleBot(TG_api)
 
 
-@bot.message_handler(commands= ['start', 'admin'])
+@bot.message_handler(commands=['start', 'admin'])
 def start(message):
+    print('шо хочешь')
     buttons = Bot_inline_btns()
     command = message.text.replace('/', '')
     user_id = message.from_user.id
@@ -29,9 +28,10 @@ def start(message):
     user_data.init(user_id)
     if is_admin is not None:
         if command == 'start':
-            bot.send_message(message.chat.id, 'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n', reply_markup=buttons.start_btns())
+            bot.reply_to(message, 'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n', reply_markup=buttons.start_btns())
+            bot.send_message(message.chat.id, 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
         elif command == 'admin' and is_admin[0]:
-            bot.send_message(message.chat.id, f'Добро пожаловать, {message.from_user.first_name}👋\nВсего пользователей: {db.quantity_records()}', reply_markup=buttons.admin_btns())
+            bot.reply_to(message, f'Добро пожаловать, {message.from_user.first_name}👋\nВсего пользователей: {db.quantity_records()}', reply_markup=buttons.admin_btns())
     else:
         bot.send_message(message.chat.id, 'Введите номер телефона: ')
         user_data.get_players(user_id)[0] = True
@@ -46,9 +46,8 @@ def number(message):
         if user_id in admins:
             is_admin = True
         db.db_write(user_id, message.from_user.username, message.from_user.first_name, message.from_user.last_name, message.text, is_admin)
-        bot.send_message(message.chat.id,
-                         'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n',
-                         reply_markup=buttons.start_btns())
+        bot.reply_to(message, 'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n', reply_markup=buttons.start_btns())
+        bot.send_message(message.chat.id, 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
         user_data.get_players(user_id)[0] = False
 
 
@@ -64,7 +63,6 @@ def callback(call):
         db.db_export_xlsx()
         bot.send_document(call.message.chat.id, open(DUMP_name_xlsx, 'rb'))
         os.remove(DUMP_name_xlsx)
-
 
 
 user_data = User_data()

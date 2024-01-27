@@ -6,7 +6,6 @@
 import csv
 import os
 import sqlite3
-
 from pandas import DataFrame
 
 

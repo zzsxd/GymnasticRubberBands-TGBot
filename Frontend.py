@@ -5,14 +5,13 @@
 #################################################
 
 import copy
-
 from telebot import types
 
 
 class Bot_inline_btns:
     def __init__(self):
         super(Bot_inline_btns, self).__init__()
-        self.__markup = types.InlineKeyboardMarkup(row_width=2)
+        self.__markup = types.InlineKeyboardMarkup(row_width=1)
 
     def start_btns(self):
         getvideo = types.InlineKeyboardButton('Получить подарок', callback_data='gift')
@@ -23,6 +22,12 @@ class Bot_inline_btns:
         export_csv = types.InlineKeyboardButton('Экспортировать БД (.csv)', callback_data='export_csv')
         export_xlsx = types.InlineKeyboardButton('Экспортировать БД (.xlsx)', callback_data='export_xlsx')
         self.__markup.add(export_csv, export_xlsx)
+        return self.__markup
+
+    def review(self):
+        reviewbtn = types.InlineKeyboardButton('Оставить отзыв', url='https://vk.com/feed')
+        self.__markup.add(reviewbtn)
+        print(self.__markup)
         return self.__markup
 
 
