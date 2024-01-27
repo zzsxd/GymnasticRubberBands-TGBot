@@ -4,7 +4,7 @@
 #                     SBR                       #
 #################################################
 ############static variables#####################
-TG_api = '6647107448:AAGTBWiMZZrTgxLoMfOu-8CrSeJqUBkTCeA'
+TG_api = ''
 admins = [818895144, 1897256227]
 DB_name = 'users.db'
 DUMP_name_csv = 'dumps/backup.csv'
