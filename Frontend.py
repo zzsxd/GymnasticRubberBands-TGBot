@@ -4,8 +4,9 @@
 #                     SBR                       #
 #################################################
 
-from telebot import types
 import copy
+
+from telebot import types
 
 
 class Bot_inline_btns:
@@ -19,28 +20,21 @@ class Bot_inline_btns:
         return self.__markup
 
     def admin_btns(self):
-        exportbd = types.InlineKeyboardButton('Экспортировать БД', callback_data='export')
-        self.__markup.add(exportbd)
+        export_csv = types.InlineKeyboardButton('Экспортировать БД (.csv)', callback_data='export_csv')
+        export_xlsx = types.InlineKeyboardButton('Экспортировать БД (.xlsx)', callback_data='export_xlsx')
+        self.__markup.add(export_csv, export_xlsx)
         return self.__markup
+
 
 class User_data:  ### взаимодействие со словарём состояний пользователей
     def __init__(self):
         super(User_data, self).__init__()
         self.__online_users = {}
-        self.__default_admin = [True, False, 0, []]  ### [is_admin, update_db_now, update_index, current_action]
+        self.__default_user = [False]
 
-    def init(self, id, admins):  ### запускается только один раз при вводе /start
-        default_user = [False, False, 0, [], None]
+    def init(self, id):  ### запускается только один раз при вводе /start
         if id not in self.__online_users.keys():
-            if id in admins:
-                default_user[0] = True
-            self.__online_users.update({id: copy.deepcopy(default_user)})
+            self.__online_users.update({id: copy.deepcopy(self.__default_user)})
 
-    def get_players(self):
-        return self.__online_users
-
-    def update_pull(self, tg_id, data):
-        self.__online_users[tg_id][3].append(data)
-
-    def update_reset(self, tg_id):
-        self.__online_users[tg_id][0:4] = copy.deepcopy(self.__default_admin)
+    def get_players(self, user_id):
+        return self.__online_users[user_id]
