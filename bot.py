@@ -6,10 +6,12 @@
 
 ############static variables#####################
 TG_api = ''
+DB_name = 'users.db'
 #################################################
 
 import telebot
 
+from Backend import DB
 from Frontend import Bot_inline_btns
 
 bot = telebot.TeleBot(TG_api)
@@ -34,5 +36,5 @@ def callback(call):
         bot.send_video(call.message.chat.id, video)
 
 
-
+db = DB(DB_name)
 bot.polling(none_stop=True)
