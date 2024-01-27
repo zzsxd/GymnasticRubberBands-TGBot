@@ -22,9 +22,11 @@ class DB:
             self.cursor = self.db.cursor()
             self.cursor.execute('''CREATE TABLE users(
                             user_id integer,
+                            nick_name text,
                             name text,
-                            username text,
-                            phone text
+                            last_name text,
+                            phone text,
+                            is_admin text
                             )
                             ''')
             self.db.commit()
@@ -32,20 +34,12 @@ class DB:
             self.db = sqlite3.connect(self.__db_path, check_same_thread=False)
             self.cursor = self.db.cursor()
 
-    def db_write(self, user_id, name, username, phone):
-        self.cursor.execute('INSERT INTO users (?, ?, ?, ?)', (user_id, name, username, phone))
+    def db_write(self, user_id, nick_name, name, last_name, phone, is_admin):
+        self.cursor.execute('INSERT INTO users (?, ?, ?, ?, ?, ?)', (user_id, nick_name, name, last_name, phone, is_admin))
         self.db.commit()
 
-    def db_read(self, data, mode):
-        out = []
-        years = []
-        if mode == 'year' and '-' in data:
-            years.extend(data.split('-'))
-            self.cursor.execute(
-                f'SELECT name, year, janre, rate, country, watchtime, desc, link, cover FROM films WHERE {mode} BETWEEN {years[0]} AND {years[1]} order by name')
-        else:
-            self.cursor.execute(
-                f'SELECT name, year, janre, rate, country, watchtime, desc, link, cover FROM films WHERE {mode} LIKE "%{data}%" order by name')
+    def db_read(self, user_id, mode):
+        self.cursor.execute(f'SELECT ? FROM users WHERE user_id = "{user_id}"')
         self.db.commit()
         for i in self.cursor.fetchall():
             out.append(i)
@@ -53,9 +47,14 @@ class DB:
             return out
 
     def db_export_csv(self):
-        self.cursor.execute('SELECT user_id, name, username, phone FROM users')
+        self.cursor.execute('SELECT user_id, nick_name, name, last_name, phone FROM users')
         data = self.cursor.fetchall()
         with open('output.csv', 'w', newline='') as f:
             writer = csv.writer(f)
-            writer.writerow(['Column 1', 'Column 2', ...])
+            writer.writerow(['ID', 'Никнейм', 'Имя', 'Фамилия', 'Номер телефона'])
             writer.writerows(data)
+
+    def quantity_records(self):
+        self.cursor.execute('SELECT COUNT(*) FROM users')
+        quantity = list(self.cursor.fetchone())
+        return quantity[0]
