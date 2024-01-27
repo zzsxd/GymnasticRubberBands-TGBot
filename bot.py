@@ -20,7 +20,7 @@ from Frontend import Bot_inline_btns, User_data
 bot = telebot.TeleBot(TG_api)
 
 
-@bot.message_handler(commands= ['start', 'admin'])
+@bot.message_handler(commands=['start', 'admin'])
 def start(message):
     buttons = Bot_inline_btns()
     command = message.text.replace('/', '')
