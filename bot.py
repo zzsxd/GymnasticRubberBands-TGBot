@@ -9,8 +9,7 @@ TG_api = ''
 #################################################
 
 import telebot
-import asyncio
-from pyrogram import Client
+
 from Frontend import Bot_inline_btns
 
 bot = telebot.TeleBot(TG_api)
