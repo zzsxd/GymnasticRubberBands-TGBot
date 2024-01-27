@@ -6,13 +6,13 @@
 
 ############static variables#####################
 TG_api = ''
+admins = [818895144, 1897256227]
 DB_name = 'users.db'
 #################################################
 
 import telebot
-
 from Backend import DB
-from Frontend import Bot_inline_btns
+from Frontend import Bot_inline_btns, User_data
 
 bot = telebot.TeleBot(TG_api)
 
@@ -21,9 +21,13 @@ bot = telebot.TeleBot(TG_api)
 def start(message):
     buttons = Bot_inline_btns()
     command = message.text.replace('/', '')
-    if command == 'start':
-        bot.send_message(message.chat.id, 'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n', reply_markup=buttons.start_btns())
-
+    user_ID = message.from_user.id
+    user.init(user_ID, admins)
+    if not user.get_players()[user_ID][1]:
+        if command == 'start':
+            bot.send_message(message.chat.id, 'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n', reply_markup=buttons.start_btns())
+        elif command == 'admin' and user.get_players()[user_ID][0]:
+            bot.send_message(message.chat.id, f'Добро пожаловать, {message.from_user.first_name}👋')
 
 
 @bot.callback_query_handler(func=lambda call: True)
@@ -35,6 +39,6 @@ def callback(call):
         bot.send_video(call.message.chat.id, video_main)
         bot.send_video(call.message.chat.id, video)
 
-
+user = User_data()
 db = DB(DB_name)
 bot.polling(none_stop=True)
