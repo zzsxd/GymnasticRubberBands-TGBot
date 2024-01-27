@@ -9,8 +9,8 @@ admins = [818895144, 1897256227]
 delay = 30 ### min
 schedules = []
 DB_name = 'users.db'
-DUMP_name_csv = 'dumps/backup.csv'
-DUMP_name_xlsx = 'dumps/backup.xlsx'
+DUMP_name_csv = 'backup.csv'
+DUMP_name_xlsx = 'backup.xlsx'
 #################################################
 
 import os
