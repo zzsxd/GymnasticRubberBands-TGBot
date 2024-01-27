@@ -5,6 +5,7 @@
 #################################################
 
 import copy
+
 from telebot import types
 
 
@@ -27,7 +28,6 @@ class Bot_inline_btns:
     def review(self):
         reviewbtn = types.InlineKeyboardButton('Оставить отзыв', url='https://vk.com/feed')
         self.__markup.add(reviewbtn)
-        print(self.__markup)
         return self.__markup
 
 
