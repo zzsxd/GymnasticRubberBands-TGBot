@@ -17,6 +17,12 @@ class Bot_inline_btns:
         getvideo = types.InlineKeyboardButton('Получить подарок', callback_data='gift')
         self.__markup.add(getvideo)
         return self.__markup
+
+    def admin_btns(self):
+        exportbd = types.InlineKeyboardButton('Экспортировать БД', callback_data='export')
+        self.__markup.add(exportbd)
+        return self.__markup
+
 class User_data:  ### взаимодействие со словарём состояний пользователей
     def __init__(self):
         super(User_data, self).__init__()
