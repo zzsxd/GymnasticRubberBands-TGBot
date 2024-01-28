@@ -8,9 +8,11 @@ TG_api = ''
 admins = [737360251]
 delay = 30 ### min
 schedules = []
-DB_name = 'users.db'
-DUMP_name_csv = 'backup.csv'
-DUMP_name_xlsx = 'backup.xlsx'
+work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/'
+DB_name = work_directory + 'users.db'
+DUMP_name_csv = work_directory + 'backup.csv'
+DUMP_name_xlsx = work_directory + 'backup.xlsx'
+video = work_directory + 'video.mp4'
 #################################################
 
 import os
@@ -58,7 +60,7 @@ def number(message):
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
     if call.data == 'gift':
-        bot.send_video(call.message.chat.id, open('video.mp4', 'rb'))
+        bot.send_video(call.message.chat.id, open(video, 'rb'))
     elif call.data == 'export_csv':
         db.db_export_csv()
         bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
