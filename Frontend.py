@@ -35,7 +35,7 @@ class User_data:  ### взаимодействие со словарём сос�
     def __init__(self):
         super(User_data, self).__init__()
         self.__online_users = {}
-        self.__default_user = [False]
+        self.__default_user = [False, 0]
 
     def init(self, id):  ### запускается только один раз при вводе /start
         if id not in self.__online_users.keys():

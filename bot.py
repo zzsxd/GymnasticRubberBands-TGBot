@@ -4,7 +4,7 @@
 #                     SBR                       #
 #################################################
 ############static variables#####################
-TG_api = ''
+TG_api = '6759391805:AAEGzac9-3igSAT7jaljWVDVavuTm9cnO48'
 admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
 schedules = []
@@ -16,6 +16,7 @@ video = work_directory + 'video.mp4'
 #################################################
 
 import os
+import time
 from threading import Lock, Timer
 
 import telebot
@@ -28,12 +29,12 @@ bot = telebot.TeleBot(TG_api)
 
 @bot.message_handler(commands=['start', 'admin'])
 def start(message):
-    buttons = Bot_inline_btns()
-    command = message.text.replace('/', '')
     user_id = message.from_user.id
     is_existed = db.db_check_exist(user_id)
     user_data.init(user_id)
     if is_existed:
+        buttons = Bot_inline_btns()
+        command = message.text.replace('/', '')
         if command == 'start':
             start_msg(message, buttons)
         elif command == 'admin' and user_id in admins:
@@ -45,10 +46,10 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def number(message):
-    buttons = Bot_inline_btns()
     user_id = message.from_user.id
     user_stat = user_data.get_players(user_id)
     if user_stat is not None:
+        buttons = Bot_inline_btns()
         if user_stat[0]:
             is_admin = 'Нет'
             if user_id in admins:
@@ -63,13 +64,17 @@ def number(message):
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
-    buttons = Bot_inline_btns()
     user_id = call.from_user.id
     user_stat = user_data.get_players(user_id)
     if user_stat is not None:
+        buttons = Bot_inline_btns()
         if call.data == 'gift':
-            bot.send_video(call.message.chat.id, open(video, 'rb'))
-            Timer(delay*60, vote_us, args=(call.message.chat.id, buttons)).start()
+            if user_stat[1] + 60 <= int(time.time()):
+                bot.send_video(call.message.chat.id, open(video, 'rb'))
+                Timer(delay*60, vote_us, args=(call.message.chat.id, buttons)).start()
+                user_stat[1] = int(time.time())
+            else:
+                bot.send_message(call.message.chat.id, 'Подождите 1 минуту!')
         elif call.data == 'export_csv':
             db.db_export_csv()
             bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
