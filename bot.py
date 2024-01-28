@@ -4,11 +4,11 @@
 #                     SBR                       #
 #################################################
 ############static variables#####################
-TG_api = '6759391805:AAEGzac9-3igSAT7jaljWVDVavuTm9cnO48'
+TG_api = ''
 admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
 schedules = []
-work_directory = '' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
+work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
 DB_name = work_directory + 'users.db'
 DUMP_name_csv = work_directory + 'backup.csv'
 DUMP_name_xlsx = work_directory + 'backup.xlsx'
