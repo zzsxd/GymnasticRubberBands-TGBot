@@ -43,7 +43,5 @@ class User_data:  ### взаимодействие со словарём сос�
 
     def get_players(self, user_id):
         if user_id in self.__online_users.keys():
-            data = self.__online_users[user_id]
-        else:
-            data = [None]
-        return data
+            return self.__online_users[user_id]
+

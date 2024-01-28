@@ -5,10 +5,10 @@
 #################################################
 ############static variables#####################
 TG_api = ''
-admins = [737360251]
+admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
 schedules = []
-work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/'
+work_directory = '' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
 DB_name = work_directory + 'users.db'
 DUMP_name_csv = work_directory + 'backup.csv'
 DUMP_name_xlsx = work_directory + 'backup.xlsx'
@@ -17,7 +17,7 @@ video = work_directory + 'video.mp4'
 
 import os
 import time
-from threading import Thread
+from threading import Lock
 
 import telebot
 
@@ -32,12 +32,12 @@ def start(message):
     buttons = Bot_inline_btns()
     command = message.text.replace('/', '')
     user_id = message.from_user.id
-    is_admin = db.db_read(user_id)
+    is_existed = db.db_check_exist(user_id)
     user_data.init(user_id)
-    if is_admin is not None:
+    if is_existed:
         if command == 'start':
             start_msg(message, buttons)
-        elif command == 'admin' and is_admin[0] == '1':
+        elif command == 'admin' and user_id in admins:
             bot.reply_to(message, f'Добро пожаловать, {message.from_user.first_name}👋\nВсего пользователей: {db.quantity_records()}', reply_markup=buttons.admin_btns())
     else:
         bot.send_message(message.chat.id, 'Введите номер телефона: ')
@@ -48,47 +48,48 @@ def start(message):
 def number(message):
     buttons = Bot_inline_btns()
     user_id = message.from_user.id
-    if user_data.get_players(user_id)[0]:
-        is_admin = False
-        if user_id in admins:
-            is_admin = True
-        db.db_write(user_id, message.from_user.username, message.from_user.first_name, message.from_user.last_name,
-                    message.text, is_admin)
-        start_msg(message, buttons)
-        user_data.get_players(user_id)[0] = False
+    user_stat = user_data.get_players(user_id)
+    if user_stat is not None:
+        if user_stat[0]:
+            is_admin = 'Нет'
+            if user_id in admins:
+                is_admin = 'Да'
+            db.db_write(user_id, message.from_user.username, message.from_user.first_name, message.from_user.last_name,
+                        message.text, is_admin)
+            start_msg(message, buttons)
+            user_stat[0] = False
+    else:
+        bot.send_message(message.chat.id, 'Введите /start')
 
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback(call):
-    if call.data == 'gift':
-        bot.send_video(call.message.chat.id, open(video, 'rb'))
-    elif call.data == 'export_csv':
-        db.db_export_csv()
-        bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
-        os.remove(DUMP_name_csv)
-    elif call.data == 'export_xlsx':
-        db.db_export_xlsx()
-        bot.send_document(call.message.chat.id, open(DUMP_name_xlsx, 'rb'))
-        os.remove(DUMP_name_xlsx)
+    buttons = Bot_inline_btns()
+    user_id = call.from_user.id
+    user_stat = user_data.get_players(user_id)
+    if user_stat is not None:
+        if call.data == 'gift':
+            bot.send_video(call.message.chat.id, open(video, 'rb'))
+            time.sleep(delay * 60)
+            bot.send_message(call.message.chat.id, 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
+        elif call.data == 'export_csv':
+            db.db_export_csv()
+            bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
+            os.remove(DUMP_name_csv)
+        elif call.data == 'export_xlsx':
+            db.db_export_xlsx()
+            bot.send_document(call.message.chat.id, open(DUMP_name_xlsx, 'rb'))
+            os.remove(DUMP_name_xlsx)
+    else:
+        bot.send_message(call.message.chat.id, 'Введите /start')
 
 
 def start_msg(message, buttons):
     bot.reply_to(message,
                  'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n',
                  reply_markup=buttons.start_btns())
-    schedules.append([message.chat.id, int(time.time())])
 
-
-def schedule():
-    while True:
-        for i in range(len(schedules)):
-            if schedules[i][1] + delay*60 <= int(time.time()):
-                buttons = Bot_inline_btns()
-                bot.send_message(schedules[i][0], 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
-                del schedules[i]
-        time.sleep(1)
 
 user_data = User_data()
-db = DB(DB_name, DUMP_name_csv, DUMP_name_xlsx)
-Thread(target=schedule).start()
+db = DB(DB_name, DUMP_name_csv, DUMP_name_xlsx, Lock())
 bot.polling(none_stop=True)
