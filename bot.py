@@ -5,7 +5,7 @@
 #################################################
 ############static variables#####################
 TG_api = ''
-admins = [737360251, 1897256227]
+admins = [737360251]
 delay = 30 ### min
 schedules = []
 DB_name = 'users.db'
@@ -35,7 +35,7 @@ def start(message):
     if is_admin is not None:
         if command == 'start':
             start_msg(message, buttons)
-        elif command == 'admin' and is_admin[0]:
+        elif command == 'admin' and is_admin[0] == '1':
             bot.reply_to(message, f'Добро пожаловать, {message.from_user.first_name}👋\nВсего пользователей: {db.quantity_records()}', reply_markup=buttons.admin_btns())
     else:
         bot.send_message(message.chat.id, 'Введите номер телефона: ')
