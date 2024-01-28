@@ -7,7 +7,6 @@
 TG_api = ''
 admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
-schedules = []
 work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
 DB_name = work_directory + 'users.db'
 DUMP_name_csv = work_directory + 'backup.csv'
