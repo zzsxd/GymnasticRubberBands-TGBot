@@ -52,7 +52,8 @@ def number(message):
         is_admin = False
         if user_id in admins:
             is_admin = True
-        db.db_write(user_id, message.from_user.username, message.from_user.first_name, message.from_user.last_name, message.text, is_admin)
+        db.db_write(user_id, message.from_user.username, message.from_user.first_name, message.from_user.last_name,
+                    message.text, is_admin)
         start_msg(message, buttons)
         user_data.get_players(user_id)[0] = False
 

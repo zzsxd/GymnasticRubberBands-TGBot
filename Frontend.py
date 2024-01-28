@@ -42,4 +42,8 @@ class User_data:  ### взаимодействие со словарём сос�
             self.__online_users.update({id: copy.deepcopy(self.__default_user)})
 
     def get_players(self, user_id):
-        return self.__online_users[user_id]
+        if user_id in self.__online_users.keys():
+            data = self.__online_users[user_id]
+        else:
+            data = [None]
+        return data
