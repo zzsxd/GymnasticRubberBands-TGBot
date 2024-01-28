@@ -8,7 +8,7 @@ TG_api = ''
 admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
 schedules = []
-work_directory = '' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
+work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
 DB_name = work_directory + 'users.db'
 DUMP_name_csv = work_directory + 'backup.csv'
 DUMP_name_xlsx = work_directory + 'backup.xlsx'
@@ -16,8 +16,7 @@ video = work_directory + 'video.mp4'
 #################################################
 
 import os
-import time
-from threading import Lock
+from threading import Lock, Timer
 
 import telebot
 
@@ -70,8 +69,7 @@ def callback(call):
     if user_stat is not None:
         if call.data == 'gift':
             bot.send_video(call.message.chat.id, open(video, 'rb'))
-            time.sleep(delay * 60)
-            bot.send_message(call.message.chat.id, 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
+            Timer(delay*60, vote_us, args=(call.message.chat.id, buttons))
         elif call.data == 'export_csv':
             db.db_export_csv()
             bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
@@ -88,6 +86,10 @@ def start_msg(message, buttons):
     bot.reply_to(message,
                  'Привет👋\nСпасибо за покупку резинки для спорта😊\nВ подарок мы хотим отправить вам видео-тренировку🎁\n',
                  reply_markup=buttons.start_btns())
+
+
+def vote_us(message, buttons):
+    bot.send_message(message, 'Оставьте пожалуйста отзыв!', reply_markup=buttons.review())
 
 
 user_data = User_data()
