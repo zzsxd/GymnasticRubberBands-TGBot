@@ -26,7 +26,7 @@ class Bot_inline_btns:
         return self.__markup
 
     def review(self):
-        reviewbtn = types.InlineKeyboardButton('Оставить отзыв', url='https://vk.com/feed')
+        reviewbtn = types.InlineKeyboardButton('Оставить отзыв', url='https://www.wildberries.ru/catalog/169065492/detail.aspx')
         self.__markup.add(reviewbtn)
         return self.__markup
 
