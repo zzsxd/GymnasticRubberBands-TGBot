@@ -8,7 +8,7 @@ TG_api = ''
 admins = [737360251, 1897256227, 818895144]
 delay = 30 ### min
 schedules = []
-work_directory = '/root/tg-bot/GymnasticRubberBands-TGBot/' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
+work_directory = '' ### '/root/tg-bot/GymnasticRubberBands-TGBot/'
 DB_name = work_directory + 'users.db'
 DUMP_name_csv = work_directory + 'backup.csv'
 DUMP_name_xlsx = work_directory + 'backup.xlsx'
@@ -69,7 +69,7 @@ def callback(call):
     if user_stat is not None:
         if call.data == 'gift':
             bot.send_video(call.message.chat.id, open(video, 'rb'))
-            Timer(delay*60, vote_us, args=(call.message.chat.id, buttons))
+            Timer(delay*60, vote_us, args=(call.message.chat.id, buttons)).start()
         elif call.data == 'export_csv':
             db.db_export_csv()
             bot.send_document(call.message.chat.id, open(DUMP_name_csv, 'rb'))
